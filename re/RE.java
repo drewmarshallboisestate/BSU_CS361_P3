@@ -175,7 +175,13 @@ public class RE implements REInterface{
 
         NFA baseHelper = new NFA();
         
-        String 
+        String charState = Integer.toString(stateCount++);
+        baseHelper.addStartState(charState);
+
+        String secondChar = Integer.toString(stateCount++);
+        baseHelper.addFinalState(secondChar);
+        baseHelper.addTransition(charState, next, secondChar);
+
         return null;
     }
 
