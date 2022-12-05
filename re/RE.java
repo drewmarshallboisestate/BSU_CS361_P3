@@ -1,5 +1,7 @@
 package re;
 
+import java.io.FilterInputStream;
+
 import fa.nfa.NFA;
 import fa.nfa.NFAState;
 
@@ -27,7 +29,7 @@ public class RE implements REInterface{
     @Override
     public NFA getNFA() {
 
-        return null;
+        return regex();
     }
 
     
@@ -58,10 +60,6 @@ public class RE implements REInterface{
         return regEx.length() > 0;
     }
 
-    private NFA base() {
-        return null;
-        
-    }
 
     private NFA regex() {
         NFA NFATerm = term();
@@ -69,19 +67,28 @@ public class RE implements REInterface{
         if (anyMore() && (peek() == '|')) {
             eat('|');
             NFA retNFA = regex();
-            return choice(NFATerm,retNFA);
+            return Choice(NFATerm, retNFA);  // '|' denotes the union so a choice of either this or that
         } else {
             return NFATerm;
         }
-       
     }
 
     private NFA term() {
         NFA NFAFactor = new NFA();
 
-        NFAFactor.addStartState(Integer.toString(stateCount));
-        stateCount ++;
+        NFAFactor.addStartState(Integer.toString(stateCount++));
+        NFAFactor.addStartState(regEx);
+        NFAFactor.addFinalState(regEx);
 
+        while (anyMore() && peek() != ')' && peek() != '|') {
+            NFA nextFactor = factor();
+            NFAFactor = Sequence(NFAFactor, nextFactor);
+        }
+    
+        return NFAFactor;
+    }
+
+    private NFA Sequence(NFA nFAFactor, NFA nextFactor) {
         
         return null;
     }
@@ -89,14 +96,53 @@ public class RE implements REInterface{
     private NFA factor() {
         NFA baseNFA = base();
 
+        while (anyMore() && peek() == '*') {
+            eat('*');
+            baseNFA = Repetition(baseNFA);
+        }
         return baseNFA;
     }
 
-    public NFA choice(NFA first, NFA second) {
+    private NFA Repetition(NFA baseNFA) {
+        return null;
+    }
+
+    public NFA Choice(NFA first, NFA second) {  //AKA Union 
         NFAState firstNFA = (NFAState) first.getStartState();
         NFAState secondNFA = (NFAState) second.getStartState();
+
+        //To union NFA's you need to add an intial state with an e-transition
+        //to each of the initial start states of the original NFA's 
+        first.addNFAStates(second.getStates());
+        first.addAbc(second.getABC());  
+
+        String newStart = Integer.toString(stateCount++);
+
+        first.addStartState(newStart);
         
-        return second;    
+        first.addTransition(newStart, 'e', firstNFA.getName());
+        first.addTransition(newStart, 'e', secondNFA.getName());;
+
+        return first;    
+    }
+
+    private NFA base() {
+
+        char baseChar = peek();
+
+        switch(baseChar) {
+            case ('('):
+                eat('(');
+                NFA expression = regex();
+                eat(')');
+                return expression;
+            default:
+                return Primitive(next());
+        }     
+    }
+
+    private NFA Primitive(char next) {
+        return null;
     }
 
 }
