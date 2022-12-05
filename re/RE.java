@@ -2,6 +2,7 @@ package re;
 
 import java.io.FilterInputStream;
 
+import fa.State;
 import fa.nfa.NFA;
 import fa.nfa.NFAState;
 
@@ -56,11 +57,15 @@ public class RE implements REInterface{
         }
     }
 
+
+    //Check if there are any more character in the regex string to be parsed
     private boolean anyMore() {
         return regEx.length() > 0;
     }
 
-
+    //NFa representation of the regular expression
+    //Used to parse the regex
+    //Regex can either go to a term '|' and another regex OR just go to a term
     private NFA regex() {
         NFA NFATerm = term();
        
@@ -73,6 +78,11 @@ public class RE implements REInterface{
         }
     }
 
+
+    //Term goes to a factor
+    //Is possibly an empty sequence of factors 
+    //Term has to check that is has not reached the boundary of a term
+    //or the end of the input
     private NFA term() {
         NFA NFAFactor = new NFA();
 
@@ -93,6 +103,8 @@ public class RE implements REInterface{
         return null;
     }
 
+    //Factor goes to a base followed by a '*'
+    //Used to produce repetition
     private NFA factor() {
         NFA baseNFA = base();
 
@@ -103,10 +115,26 @@ public class RE implements REInterface{
         return baseNFA;
     }
 
+    //Representation of *
     private NFA Repetition(NFA baseNFA) {
-        return null;
+        NFAState internal = (NFAState) baseNFA.getStartState();
+        String transTo = internal.getName();
+
+        for (State s: baseNFA.getFinalStates()) {
+            String transFrom = s.getName();
+            baseNFA.addTransition(transFrom, 'e', transTo);
+        }
+
+        String newState = Integer.toString(stateCount++);
+
+        baseNFA.addStartState(newState);
+        baseNFA.addFinalState(newState);
+        baseNFA.addTransition(newState, 'e', transTo);
+
+        return baseNFA;
     }
 
+    //Union of two NFA's
     public NFA Choice(NFA first, NFA second) {  //AKA Union 
         NFAState firstNFA = (NFAState) first.getStartState();
         NFAState secondNFA = (NFAState) second.getStartState();
@@ -126,6 +154,7 @@ public class RE implements REInterface{
         return first;    
     }
 
+    //Base goes to a char OR a '\' char OR a '(' regex ')'
     private NFA base() {
 
         char baseChar = peek();
@@ -141,7 +170,12 @@ public class RE implements REInterface{
         }     
     }
 
+    //Last case of regex will hold an individual character
     private NFA Primitive(char next) {
+
+        NFA baseHelper = new NFA();
+        
+        String 
         return null;
     }
 
