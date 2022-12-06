@@ -69,10 +69,9 @@ public class RE implements REInterface{
     private NFA regex() {
         NFA NFATerm = term();
        
-        if (anyMore() && (peek() == '|')) {
+        if (anyMore() && peek() == '|') {
             eat('|');
-            NFA retNFA = regex();
-            return Choice(NFATerm, retNFA);  // '|' denotes the union so a choice of either this or that
+            return Choice(NFATerm, regex());  // '|' denotes the union so a choice of either this or that
         } else {
             return NFATerm;
         }
@@ -86,9 +85,10 @@ public class RE implements REInterface{
     private NFA term() {
         NFA NFAFactor = new NFA();
 
-        NFAFactor.addStartState(Integer.toString(stateCount++));
-        NFAFactor.addStartState(regEx);
-        NFAFactor.addFinalState(regEx);
+        String helper = Integer.toString(stateCount);
+        stateCount ++;
+        NFAFactor.addStartState(helper);
+        NFAFactor.addFinalState(helper);
 
         while (anyMore() && peek() != ')' && peek() != '|') {
             NFA nextFactor = factor();
@@ -98,9 +98,16 @@ public class RE implements REInterface{
         return NFAFactor;
     }
 
-    private NFA Sequence(NFA nFAFactor, NFA nextFactor) {
-        
-        return null;
+    private NFA Sequence(NFA NFAFactor, NFA nextFactor) {
+        //NFAFactor.addAbc(nextFactor.getABC());
+
+        for (State state: NFAFactor.getFinalStates()) {
+            ((NFAState) state).setNonFinal();
+            ((NFAState) state).addTransition('e', (NFAState) nextFactor.getStartState());
+        }
+        NFAFactor.addNFAStates(nextFactor.getStates());
+        NFAFactor.addAbc(nextFactor.getABC());
+        return NFAFactor;
     }
 
     //Factor goes to a base followed by a '*'
@@ -182,7 +189,7 @@ public class RE implements REInterface{
         baseHelper.addFinalState(secondChar);
         baseHelper.addTransition(charState, next, secondChar);
 
-        return null;
+        return baseHelper;
     }
 
 }
