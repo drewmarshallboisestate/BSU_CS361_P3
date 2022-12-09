@@ -1,0 +1,7 @@
+a*b
+aabaa
+aaab
+aabba
+abbaa
+abbbbbbbbbbbbbbbbbbba
+a
