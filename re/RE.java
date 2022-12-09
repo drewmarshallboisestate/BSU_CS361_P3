@@ -6,6 +6,17 @@ import fa.State;
 import fa.nfa.NFA;
 import fa.nfa.NFAState;
 
+/**
+ * December 9, 2022
+ * This class parses through a regular expression and
+ * creates a standard NFA. It uses recursive decent to
+ * parse the regular expression and build the NFA
+ * state by state. 
+ * @author Drew Marshall    
+ * @author Steven Lineses
+ *
+ */
+
 public class RE implements REInterface{
 
     String regEx;  //String representation of the regular expression passed in from the file 
@@ -213,6 +224,15 @@ public class RE implements REInterface{
         first.addStartState(newStart);
         first.addTransition(newStart, 'e', firstNFA.getName());
         first.addTransition(newStart, 'e', secondNFA.getName());;
+
+        String toBeFinal = Integer.toString(stateCount);
+        stateCount ++;
+        first.addFinalState(toBeFinal);
+
+        for (State state: second.getFinalStates()) {
+            ((NFAState) state).setNonFinal();
+            first.addTransition(((NFAState) state).getName(), 'e', toBeFinal);
+        }
 
         return first;  //First NFA will now be the union of the first and second NFA
     }

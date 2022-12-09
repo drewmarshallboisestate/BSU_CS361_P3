@@ -16,7 +16,7 @@
             "request": "launch",
             "mainClass": "re.REDriver",
             "projectName": "P3_8c8675b1",
-            "args": "./tests/p3tc3.txt"
+            "args": "./tests/p3tc5.txt"
         }
     ]
 }
