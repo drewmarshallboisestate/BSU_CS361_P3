@@ -1,0 +1,51 @@
+
+# Project 3: Regular Expressions
+* Author: Drew Marshall, Steven Lineses
+* Class: CS121 Section #002
+* Semester: Fall 2022
+
+## Overview
+This program takes a file containing a regular expression and parses
+it character by character in order to create an NFA representation of
+the regular expression. This is done through recursive decent of the 
+given regular expression. 
+
+## Reflection
+The greatest help with this project was the link to the article that 
+walked through how to recursively descent a regular expression, and 
+how it should be set up in a sense of each differnt block leading to
+the next. However, this also provided the main struggle with the recursion 
+and constantly passing things along. This made it particularily hard to 
+debug having to step through every process.
+
+I don't think there's too much that's left unclear. We've covered DFA's,
+NFA's, and now regular expressions and by doing so we were able to 
+understand how each one would thus impact the other. In fact, we encountered
+some of the same issues during testing that we found from P2. The one issue
+that caused us concern was testing a string that had an invalid character 
+that wasn't in the alphabet. 
+
+As for design process, it was laid out for us really well by the article
+that was linked with the assignment. One bonus we learned from last time 
+was to start early which helped out with debugging and providing us time
+to perform sufficient testing. The only thing I would do different is 
+keep better track and organization of each seperate block in the program.
+As well, maybe use a better naming system when creating new states to help
+with debugging. However, I tried to follow how the process would occur 
+when using a program such as JFlap. 
+
+## Compiling and Using
+This section should tell the user how to compile your code.  It is
+also appropriate to instruct the user how to use your code. Does your
+program require user input? If so, what does your user need to know
+about it to use it as quickly as possible?
+
+## Sources used
+We didn't use many resources outside of what was given. It took some time
+to remember how to perform a union and concatenation function on two
+NFA's. The sources we did use are the following:
+
+https://matt.might.net/articles/parsing-regex-with-recursive-descent/
+https://www.tutorialspoint.com/what-is-recursive-descent-parser#:~:text=Recursive%20Descent%20Parser%20uses%20the,performed%20using%20a%20Recursive%20language.
+https://www.geeksforgeeks.org/recursive-descent-parser/
+----------
